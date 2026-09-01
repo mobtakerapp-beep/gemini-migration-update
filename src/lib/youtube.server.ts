@@ -271,9 +271,9 @@ export async function transcribeYoutubeAudio(videoId: string, apiKey?: string): 
     });
   if (geminiKey)
     providers.push({
-      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
       key: geminiKey,
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       gemini: true,
     });
   if (providers.length === 0) throw new Error("youtube_transcription_unavailable");
