@@ -22,6 +22,24 @@ export async function exportNodeToPdf(node: HTMLElement, fileName: string) {
   ]);
 
   const scale = 2;
+  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageWidth = 210;
+  const pageHeight = 297;
+  const margin = 6;
+  const usableWidth = pageWidth - margin * 2;
+  const usableHeight = pageHeight - margin * 2;
+
+  // Render the sheet at true A4 content width (96dpi) so text fills the page
+  // instead of being shrunk down from a wide desktop layout.
+  const A4_CONTENT_PX = Math.round((usableWidth / 25.4) * 96);
+  const previousWidth = node.style.width;
+  const previousMaxWidth = node.style.maxWidth;
+  node.style.width = `${A4_CONTENT_PX}px`;
+  node.style.maxWidth = `${A4_CONTENT_PX}px`;
+  node.classList.add("pdf-exporting");
+  // Force reflow before measuring keep-together blocks.
+  void node.offsetHeight;
+
   const nodeRect = node.getBoundingClientRect();
   // Measure keep-together blocks before rasterizing, relative to the node top.
   const avoidBlocks = Array.from(node.querySelectorAll<HTMLElement>(".break-inside-avoid"))
@@ -35,14 +53,14 @@ export async function exportNodeToPdf(node: HTMLElement, fileName: string) {
     .filter((b) => b.bottom > b.top && b.bottom > 0)
     .sort((a, b) => a.top - b.top);
 
-  node.classList.add("pdf-exporting");
   let canvas: HTMLCanvasElement;
   try {
     canvas = await html2canvas(node, {
       scale,
       useCORS: true,
       backgroundColor: "#ffffff",
-      windowWidth: document.documentElement.clientWidth,
+      width: A4_CONTENT_PX,
+      windowWidth: A4_CONTENT_PX,
       onclone: (clonedDoc) => {
         clonedDoc.documentElement.classList.remove("dark");
         clonedDoc.body.classList.remove("dark");
@@ -51,13 +69,9 @@ export async function exportNodeToPdf(node: HTMLElement, fileName: string) {
     });
   } finally {
     node.classList.remove("pdf-exporting");
+    node.style.width = previousWidth;
+    node.style.maxWidth = previousMaxWidth;
   }
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const pageWidth = 210;
-  const pageHeight = 297;
-  const margin = 8;
-  const usableWidth = pageWidth - margin * 2;
-  const usableHeight = pageHeight - margin * 2;
   const canvasPageHeight = (usableHeight * canvas.width) / usableWidth;
 
   const splitsBlock = (end: number, start: number) =>
