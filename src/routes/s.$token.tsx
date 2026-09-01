@@ -1,18 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { BookOpen, Gamepad2, Home, Loader2, Printer, Sparkles } from "lucide-react";
+import { Gamepad2, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import logoUrl from "@/assets/logo.png";
-import { FlashcardsTab } from "@/components/FlashcardsTab";
 import { PlayTab } from "@/components/PlayTab";
-import { SummaryTab } from "@/components/SummaryTab";
-import { WorksheetTab } from "@/components/WorksheetTab";
 import { Card } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/lib/i18n";
 import type { LessonPackage } from "@/lib/lesson-types";
+import { decodeLessonFromHash } from "@/lib/share-link";
 import { getSharedLesson } from "@/lib/shares.functions";
 
 export const Route = createFileRoute("/s/$token")({
