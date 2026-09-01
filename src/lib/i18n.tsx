@@ -100,8 +100,8 @@ const dict = {
     youtubeHint: "نجلب النص المكتوب (الترجمة) للفيديو ونحوّله إلى درس وأسئلة.",
     errYoutubeUrl: "رابط يوتيوب غير صالح",
     errYoutubeCaptions: "تعذّر استخراج نص من هذا الفيديو، جرّب فيديو آخر.",
-    errOpenaiQuota: "رصيد OpenAI انتهى — اشحنِ الرصيد من حسابك ثم أعيدي المحاولة.",
-    errOpenaiKey: "مفتاح OpenAI غير صالح.",
+    errOpenaiQuota: "حصة Gemini انتهت — راجعي حصة مفتاح Gemini في Google AI Studio ثم أعيدي المحاولة.",
+    errOpenaiKey: "مفتاح Gemini (GEMINI_API_KEY) غير صالح.",
     errYoutubeFetch: "تعذّر جلب الفيديو، حاول مرة أخرى.",
   },
   en: {
@@ -201,8 +201,8 @@ const dict = {
     youtubeHint: "We fetch the video captions and turn them into a lesson with questions.",
     errYoutubeUrl: "Invalid YouTube link",
     errYoutubeCaptions: "Couldn't extract text from this video. Try another video.",
-    errOpenaiQuota: "OpenAI credits are exhausted — top up your account and try again.",
-    errOpenaiKey: "The OpenAI key is invalid.",
+    errOpenaiQuota: "Gemini quota is exhausted — check your Gemini API key quota in Google AI Studio and try again.",
+    errOpenaiKey: "The Gemini key (GEMINI_API_KEY) is invalid.",
     errYoutubeFetch: "Could not fetch the video, please try again.",
   },
 };
