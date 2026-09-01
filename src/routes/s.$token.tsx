@@ -1,18 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { BookOpen, Gamepad2, Home, Loader2, Printer, Sparkles } from "lucide-react";
+import { Gamepad2, Home, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import logoUrl from "@/assets/logo.png";
-import { FlashcardsTab } from "@/components/FlashcardsTab";
 import { PlayTab } from "@/components/PlayTab";
-import { SummaryTab } from "@/components/SummaryTab";
-import { WorksheetTab } from "@/components/WorksheetTab";
 import { Card } from "@/components/ui/card";
 import { Toaster } from "@/components/ui/sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18n } from "@/lib/i18n";
 import type { LessonPackage } from "@/lib/lesson-types";
+import { decodeLessonFromHash } from "@/lib/share-link";
 import { getSharedLesson } from "@/lib/shares.functions";
 
 export const Route = createFileRoute("/s/$token")({
@@ -45,6 +42,12 @@ function SharedLessonPage() {
 
   useEffect(() => {
     void (async () => {
+      const fromHash = decodeLessonFromHash(window.location.hash);
+      if (fromHash) {
+        setPkg(fromHash);
+        setState("ready");
+        return;
+      }
       try {
         const res = await load({ data: { token } });
         setPkg(res.package);
@@ -94,48 +97,22 @@ function SharedLessonPage() {
       )}
 
       {state === "ready" && pkg && (
-        <section className="mx-auto mt-6 max-w-6xl">
+        <section className="mx-auto mt-6 max-w-4xl">
           <Card className="mb-5 rounded-3xl p-5" dir={pkg.language === "ar" ? "rtl" : "ltr"}>
             <h1 className="flex items-center gap-2 font-display text-xl font-extrabold sm:text-2xl">
-              <Sparkles className="size-5 text-amber" /> {pkg.title}
+              <Gamepad2 className="size-5 text-amber" /> {pkg.title}
             </h1>
             <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               {ar
-                ? "درس مشترك من معلّمك — العب، راجع، واطبع ورقة العمل."
-                : "A lesson shared by your teacher — play, review and print the worksheet."}
+                ? "العب المسابقة مع معلّمك وزملائك — أجب عن الأسئلة واجمع النقاط!"
+                : "Play the quiz with your teacher and classmates — answer and collect points!"}
             </p>
           </Card>
 
-          <Tabs defaultValue="play">
-            <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-2xl p-1 sm:grid-cols-4">
-              <TabsTrigger value="play" className="rounded-xl py-2">
-                <Gamepad2 className="mr-2 size-4" /> {ar ? "العب" : "Play"}
-              </TabsTrigger>
-              <TabsTrigger value="cards" className="rounded-xl py-2">
-                <BookOpen className="mr-2 size-4" /> {ar ? "بطاقات" : "Cards"}
-              </TabsTrigger>
-              <TabsTrigger value="summary" className="rounded-xl py-2">
-                <Sparkles className="mr-2 size-4" /> {ar ? "الملخص" : "Summary"}
-              </TabsTrigger>
-              <TabsTrigger value="sheet" className="rounded-xl py-2">
-                <Printer className="mr-2 size-4" /> {ar ? "ورقة عمل" : "Worksheet"}
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="play" className="mt-5">
-              <PlayTab pkg={pkg} />
-            </TabsContent>
-            <TabsContent value="cards" className="mt-5">
-              <FlashcardsTab pkg={pkg} />
-            </TabsContent>
-            <TabsContent value="summary" className="mt-5">
-              <SummaryTab pkg={pkg} />
-            </TabsContent>
-            <TabsContent value="sheet" className="mt-5">
-              <WorksheetTab pkg={pkg} />
-            </TabsContent>
-          </Tabs>
+          <PlayTab pkg={pkg} />
         </section>
       )}
     </main>
   );
 }
+
